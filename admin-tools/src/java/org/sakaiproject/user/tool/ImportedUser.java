@@ -34,6 +34,7 @@ public class ImportedUser {
 	private String email;
 	private String password;
 	private String type;
+	private String school;
 	private ResourceProperties properties;
 	
 }

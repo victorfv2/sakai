@@ -43,6 +43,10 @@
                             <td><label>$tlang.getString("usecre.typ")</label></td>
                             <td>$formattedText.escapeHtml($user.Type)</td>
                         </tr>
+                         <tr>
+                            <td><label>$tlang.getString("usecre.school")</label></td>
+                            <td>$formattedText.escapeHtml($user.school)</td>
+                        </tr>
                         #if($enableEdit)
                             <tr>
                                 <td><label>$tlang.getString("disabled")</label></td>
