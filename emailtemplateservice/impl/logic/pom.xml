@@ -5,7 +5,7 @@
         <groupId>org.sakaiproject.emailtemplateservice</groupId>
         <artifactId>emailtemplateservice</artifactId>
         <version>22-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <name>Sakai Emailtemplateservice Implementation (emailtemplateservice-impl)</name>
@@ -52,7 +52,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
-<!-- needed by hibernate unit tests -->
+        <!-- needed by hibernate unit tests -->
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
@@ -95,7 +95,7 @@
             <version>3.4</version>
             <scope>test</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.31</version>
@@ -106,12 +106,18 @@
             <version>${sakai.simple-xml.version}</version>
         </dependency>
         <dependency>
-  			<groupId>org.apache.commons</groupId>
-  			<artifactId>commons-lang3</artifactId>
-		</dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.18</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
