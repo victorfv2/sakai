@@ -129,7 +129,7 @@
 
                     return response.json().then(function (response) {
                         var redirectUrl = /*[[@{'/index'}]]*/;
-                        if(data.locale === null) data.locale = "default";
+                        if(data.locale === "")data.locale = 'default';
                         redirectUrl += "/true/" + data.key + "/" + data.locale;
                         window.location.href = redirectUrl;
                     });
