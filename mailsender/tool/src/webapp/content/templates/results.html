@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/common :: head">
-<body>
-<div th:replace="fragments/common :: jQuery" />
-<div class="portletBody">
-    <div id="menu" th:include="fragments/menus :: main (compose)" />
-	<span th:text="#{message.sent.to}">Message sent to:</span>
-</div>
-</body>
+    <head>
+        <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+        <link href="/mailsender-tool/content/css/MailSender.css" type="text/css" rel="stylesheet" media="all" />
+        <script src="/library/js/headscripts.js"></script>
+    </head> 
+    <body>
+        <div class="portletBody">
+            <div id="menu" th:include="fragments/menus :: main (compose)" />
+                <span th:text="#{message.sent.to}">Message sent to:</span>
+                <ul th:each="user:${emails}">
+                    <li th:text="${user}"></li>
+                </ul>
+        </div>
+    </body>
 </html>

@@ -13,7 +13,8 @@
     <body>
         <div class="portletBody">
             <div id="menu" th:include="fragments/menus :: main (compose)" />
-            <form id="mainForm" method="post" th:action="@{/compose}" >
+            <div th:if="${email}" th:utext="#{no.from.address}" class="sak-banner-error"></div>
+            <form id="mainForm" method="post" th:action="@{/compose}" enctype="multipart/form-data" >
                 <div class="page-header">
                     <h1 th:text="#{compose_toolbar}">Compose</h1>
                 </div>
@@ -31,7 +32,7 @@
                     </div>
                     <div id="todiv" class="headervalue">
                         <div class="rcpt_select">
-                            <input type="checkbox" id="mailsender-rcpt-all" name="rcptsall" onclick="RcptSelect.toggleSelectAll()"/>
+                            <input type="checkbox" id="mailsender-rcpt-all" name="rcptsall" onclick="RcptSelect.toggleSelectAll()" value="true"/>
                             <label th:text="#{select_rcpts_all}" for="mailsender-rcpt-all">All</label>        
                         </div>
                         <span> | </span>
@@ -49,13 +50,13 @@
                         <div id="mailsender-roles" class="rolesArea hidden" >
                             <div th:if="${comp.getEmailRoles().size()==0}" ><ul><li th:text="#{no.role.found}"></li></ul></div>
                             <div th:unless="${comp.getEmailRoles().size()==0}" th:each="rol:${comp.getEmailRoles()}" class="userGroupsList">
-                                <input type="checkbox" name="rolename" th:value="${rol.getRoleId()}" onclick="RcptSelect.toggleIndividual()" ></input>
-                                <label  style="font-weight: normal"><a th:text="${rol.getRoleId()}" href="#" onclick="shus(this)" /></label>
+                                <input th:id="${rol.getRoleId()}" type="checkbox" name="rolename" th:value="${rol.getRoleId()}" onclick="RcptSelect.toggleSelectAll(this.id)" ></input>
+                                <label  style="font-weight: normal"><a th:text="${rol.getRoleId()}" href="#" onclick="showIndividuals(this)" /></label>
                                 <div class="hidden usersList" >
                                     <div th:if="${comp.getUsersByRole(rol.getRoleId()).size()==0}"><ul><li th:text=""></li></ul></div>
                                     <div th:unless="${comp.getUsersByRole(rol.getRoleId()).size()==0}" th:each="user:${comp.getUsersByRole(rol.getRoleId())}" >
-                                        <input type="checkbox" name="user" th:value="${user.getId()}" onclick="RcptSelect.toggleIndividual(this.id)"/>
-                                        <label th:text="${user.getDisplayId()}"/>
+                                        <input th:id="${user.getId()}" type="checkbox" name="user" th:value="${user.getId()}" onclick="RcptSelect.toggleIndividual(this.id)" th:attrappend="disabled=${user.getEmail().isEmpty()}?@{disabled}"/>
+                                        <label th:text="${user.getDisplayName()}+'('+ ${user.getDisplayId()}+')'"/>
                                     </div>
                                 </div> 
                             </div>
@@ -63,13 +64,13 @@
                         <div id="mailsender-sections" class="rolesArea hidden">
                             <div th:if="${comp.getEmailSections().size()==0}" ><ul><li th:text="#{no.section.found}"></li></ul></div>
                             <div th:unless="${comp.getEmailSections().size()==0}" th:each="rolsec:${comp.getEmailSections()}" class="userGroupsList" >
-                                <input type="checkbox" name="rolesecname" th:value="${rolsec.getRoleId()}"></input>
-                                <label  style="font-weight: normal"><a th:text="${rolsec.getRoleSingular()}" href="#" onclick="shus(this)"></a></label>
+                                <input  th:id="${rolg.getRoleSingular()}" type="checkbox" name="rolesecname" th:value="${rolsec.getRoleSingular()}" onclick="RcptSelect.toggleSelectAll(this.id)"></input>
+                                <label  style="font-weight: normal"><a th:text="${rolsec.getRoleSingular()}" href="#" onclick="showIndividuals(this)"></a></label>
                                 <div  class="hidden usersList" >
                                     <div th:if="${comp.countUsersByGroup()==0}"><ul><li th:text="#{no.group.members.found}"></li></ul></div>
                                     <div th:unless="${comp.countUsersByGroup(rolsec.getRoleId())==0}" th:each="usersec:${comp.getUsersByGroup(rolsec.getRoleSingular())}"  >
-                                        <input type="checkbox" name="user" th:value="${usersec.getId()" onclick="RcptSelect.toggleIndividual(this.id)" />
-                                        <label th:text="${usersec.getDisplayId()}"/>
+                                        <input th:id="${usersec.getId()}" type="checkbox" name="user" th:value="${usersec.getId()" onclick="RcptSelect.toggleIndividual(this.id)" th:attrappend="disabled=${usersec.getEmail().isEmpty()}?@{disabled}" />
+                                        <label th:text="${usersec.getDisplayName()}+'('+ ${usersec.getDisplayId()}+')'" />
                                     </div>
                                 </div> 
                             </div>
@@ -77,13 +78,13 @@
                         <div id="mailsender-groups" class="rolesArea hidden">
                             <div th:if="${comp.getEmailGroups().size()==0}"><ul><li th:text="#{no.group.found}"></li></ul></div>
                             <div th:unless="${comp.getEmailGroups().size()==0}" th:each="rolg:${comp.getEmailGroups()}" class="userGroupsList" >
-                                <input type="checkbox" name="rolegname"></input>
-                                <label  style="font-weight: normal"><a th:text="${rolg.getRoleSingular()}" href="#" onclick="shus(this)" ></a></label>
+                                <input th:id="${rolg.getRoleSingular()}" type="checkbox" name="rolegname" th:value="${rolg.getRoleSingular()}" onclick="RcptSelect.toggleSelectAll(this.id)"></input>
+                                <label  style="font-weight: normal"><a th:text="${rolg.getRoleSingular()}" href="#" onclick="showIndividuals(this)" ></a></label>
                                 <div class="hidden usersList" >
                                     <div th:if="${comp.countUsersByGroup(rolg.getRoleId())==0}" ><ul><li th:text="#{no.group.members.found}"></li></ul></div>
                                     <div th:unless="${comp.countUsersByGroup(rolg.getRoleId())==0}" th:each="userg:${comp.getUsersByGroup(rolg.getRoleId())}" >
-                                        <input type="checkbox" name="user" th:value="${userg.getId()}" />
-                                        <label th:text="${userg.getDisplayId()}"/>
+                                        <input th:id="${userg.getId()}" type="checkbox" name="user" th:value="${userg.getId()}" onclick="RcptSelect.toggleIndividual(this.id)" th:attrappend="disabled=${userg.getEmail().isEmpty()}?@{disabled}" />
+                                        <label th:text="${userg.getDisplayName()}+'('+ ${userg.getDisplayId()}+')'"/>
                                     </div>
                                 </div> 
                             </div>
@@ -108,7 +109,7 @@
                             <span class="headerkey"><label th:text="#{message_subject}" for="subject">Subject:</label></span>
                         </div>
                         <div class="headervalue">
-                            <input id="subject" class="fullwidth" name="subject" value="" type="text" />
+                            <input id="subject" class="fullwidth" name="subject" value="" type="text" required />
                         </div>
                     </div>
 
@@ -126,32 +127,32 @@
                     <div class="section">
                         <div class="headervalue">
                             <!-- <sakai-editor editor-id="editor-classic" toolbar="basic" ></sakai-editor>-->
-                            <textarea name="editor1" id="editor1">
+                            <textarea  name="editor1" id="editor1">
                             </textarea>
                         </div>
                     </div>
 
                     <div class="section">
                         <div class="headervalue">
-                            <input name="sendMeACopy" type="checkbox" id="sendMeACopy"  th:attrappend="checked=${config.isSendMeACopy() == true}?@{checked}"/>
+                            <input name="sendMeACopy" type="checkbox" id="sendMeACopy" value="true" th:attrappend="checked=${config.isSendMeACopy() == true}?@{checked}"/>
                             <label th:text="#{sendmeacopy}" for="sendMeCopy">Send me a copy</label>
                         </div>
                         <div th:if="${added==true}" id="addToArchiveDiv" class="headervalue">
-                            <input  name="addToArchive" type="checkbox" id="addToArchive" th:attrappend="checked=${config.isAddToArchive() == true}?@{checked}" />
+                            <input  name="addToArchive" type="checkbox" id="addToArchive" value="true" th:attrappend="checked=${config.isAddToArchive() == true}?@{checked}" />
                             <label th:text="#{addtoemailarchive}" for="addToArchive">
                                 Add to Email Archive, visible to all site participants
                             </label>
                         </div>
                         <div class="headervalue">
-                            <input name="appendRecipientList" type="checkbox" id="appendRecipientList" th:attrappend="checked=${config.isAppendRecipientList() == true}?@{checked}"/>
+                            <input name="appendRecipientList" type="checkbox" id="appendRecipientList" value="true" th:attrappend="checked=${config.isAppendRecipientList() == true}?@{checked}"/>
                             <label th:text="#{appendrecipientlist}" th:value="#{appendrecipientlist}" for="appendRecipientList">Append list of recipients to message</label>
                         </div>
                     </div>
                     <div class="section headervalue act">
-                        <input id="send-button" value="Send Mail" class="active" type="submit" />
+                        <input id="send-button" value="Send Mail" class="active" type="submit" th:attrappend="disabled=${email == true}?@{disabled}" />
                         <input id="cancel-button" value="Cancel" type="submit" />
                     </div>
-                    <script defer="1">  sakai.editor.launch("editor1", "{noop:0}");
+                    <script>  sakai.editor.launch("editor1", "{noop:0}");
 
                         var hroles = document.getElementById("mailsender-rcpt-link-roles");
                         var hsections = document.getElementById("mailsender-rcpt-link-sections");
@@ -159,49 +160,6 @@
                         var roles = document.getElementById("mailsender-roles");
                         var sections = document.getElementById("mailsender-sections");
                         var groups = document.getElementById("mailsender-groups");
-
-                        function shus(label) {
-                            if (label.parentElement.nextElementSibling.className.includes("hidden")) {
-                                label.parentElement.nextElementSibling.classList.remove("hidden")
-                            } else {
-                                label.parentElement.nextElementSibling.classList.add("hidden")
-                            }
-
-                        }
-
-                        function show(id) {
-                            switch (id) {
-
-
-                                case "mailsender-rcpt-link-roles":
-                                    roles.classList.remove("hidden");
-                                    hroles.removeAttribute("href");
-                                    sections.classList.add("hidden");
-                                    hsections.setAttribute("href", "#");
-                                    groups.classList.add("hidden");
-                                    hgroups.setAttribute("href", "#")
-                                    break;
-
-                                case "mailsender-rcpt-link-sections":
-                                    sections.classList.remove("hidden");
-                                    hsections.removeAttribute("href");
-                                    roles.classList.add("hidden");
-                                    hroles.setAttribute("href", "#");
-                                    groups.classList.add("hidden");
-                                    hgroups.setAttribute("href", "#");
-                                    break;
-
-                                case "mailsender-rcpt-link-groups":
-                                    groups.classList.remove("hidden");
-                                    hgroups.removeAttribute("href");
-                                    sections.classList.add("hidden");
-                                    hsections.setAttribute("href", "#");
-                                    roles.classList.add("hidden");
-                                    hroles.setAttribute("href", "#");
-                                    break;
-                            }
-                        }
-                        ;
                     </script>
             </form>
         </div>

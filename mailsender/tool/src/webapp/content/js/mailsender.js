@@ -1325,7 +1325,7 @@ var Attachment = function()
 			// create the file upload field
 			var input = document.createElement('input');
 			input.type = 'file';
-			input.name = newAttachmentId;
+			input.name = 'attachment';
 			newDiv.appendChild(input);
 
 			// create the remove link
@@ -1363,25 +1363,13 @@ var Dirty = function()
 	 */
 	function collectFossils()
 	{
-		var fossilex =  /^(.*)-fossil$/;
 		var fossils = {};
 		if (typeof elements !== 'undefined' && elements)
 		{
 			jQuery(':input').each(function()
 			{
 				var element = elements[i];
-				// see if name exists and matches regex
-				if (this.name)
-				{
-					var matches = this.name.match(fossilex);
-					if (matches != null)
-					{
-						// use the name sans '-fossil' to store the element
-						// this saves having to parse the field name again
-						// later in processing.
-						fossils[matches[1]] = this;
-					}
-				}
+				// see if name exists and matches regex				
 			});
 		}
 		return fossils;
@@ -1624,7 +1612,6 @@ var RcptSelect = function()
 			jQuery('#otherRecipientsDiv').show();
 			jQuery('#otherRecipientsLink').hide();
 			//resetFrame();
-                        console.log("tete")
 		},
 
 		/**
@@ -1716,7 +1703,7 @@ var RcptSelect = function()
 			  </div>
 			</div>
 			*/
-			var selectAll = checkbox.parent().parent().parent().siblings('input[type=checkbox]');
+			var selectAll = checkbox.parent().parent().siblings('input[type=checkbox]');
 			if (!checkbox.is(':checked'))
 			{
 				selectAll.attr('checked', false);
@@ -1753,4 +1740,43 @@ var RcptSelect = function()
 			}
 		}
 	}; // end return
+        
 }(); // end namespace
+function showIndividuals(label) {
+            if (label.parentElement.nextElementSibling.className.includes("hidden")) {
+                label.parentElement.nextElementSibling.classList.remove("hidden");
+            } else {
+                label.parentElement.nextElementSibling.classList.add("hidden");
+            }
+        };
+        
+function show(id) {
+    switch (id) {
+        case "mailsender-rcpt-link-roles":
+            roles.classList.remove("hidden");
+            hroles.removeAttribute("href");
+            sections.classList.add("hidden");
+            hsections.setAttribute("href", "#");
+            groups.classList.add("hidden");
+            hgroups.setAttribute("href", "#")
+            break;
+
+        case "mailsender-rcpt-link-sections":
+            sections.classList.remove("hidden");
+            hsections.removeAttribute("href");
+            roles.classList.add("hidden");
+            hroles.setAttribute("href", "#");
+            groups.classList.add("hidden");
+            hgroups.setAttribute("href", "#");
+            break;
+            
+        case "mailsender-rcpt-link-groups":
+            groups.classList.remove("hidden");
+            hgroups.removeAttribute("href");
+            sections.classList.add("hidden");
+            hsections.setAttribute("href", "#");
+            roles.classList.add("hidden");
+            hroles.setAttribute("href", "#");
+            break;
+    }
+};

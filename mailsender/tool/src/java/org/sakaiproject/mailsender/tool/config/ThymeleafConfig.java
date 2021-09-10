@@ -15,13 +15,19 @@
  ******************************************************************************/
 package org.sakaiproject.mailsender.tool.config;
 
+import java.nio.charset.StandardCharsets;
+import org.sakaiproject.component.api.ServerConfigurationService;
+import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.util.ResourceLoaderMessageSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -43,6 +49,9 @@ public class ThymeleafConfig extends WebMvcConfigurerAdapter implements Applicat
     private static final String UTF8 = "UTF-8";
 
     private ApplicationContext applicationContext;
+    
+    @Autowired
+    private ServerConfigurationService serverConfigurationService;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -96,6 +105,15 @@ public class ThymeleafConfig extends WebMvcConfigurerAdapter implements Applicat
     @Bean
     public LocaleResolver localeResolver() {
         return new SessionLocaleResolver();
+    }
+    
+     @Bean
+    public MultipartResolver multipartResolver() {
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+        long uploadMax = Long.parseLong(serverConfigurationService.getString(ContentHostingService.SAK_PROP_MAX_UPLOAD_FILE_SIZE));
+        commonsMultipartResolver.setMaxUploadSize(uploadMax * 1024 * 1024);// The result of this mutliply is 20 MB 
+        commonsMultipartResolver.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        return commonsMultipartResolver;
     }
 
 }

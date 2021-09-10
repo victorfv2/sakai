@@ -13,7 +13,7 @@
       </span></li>
       <li role="presentation"><span th:class="${current}=='permissions' ? 'current'">
         <span th:if="${current}=='permissions'" th:text="#{mailsender.navbar.permissions}">Permissions</span>
-        <a th:unless="${current}=='permissions'" href="#" th:href="@{/permissions}" th:text="#{mailsender.navbar.permissions}">Permissions</a>
+        <a th:unless="${current}=='permissions'" href="#" th:href="@{/permissions}" th:text="#{mailsender.navbar.permissions}" th:onclick="Dirty.check(\'' + #{navigate.lose.data}+ '\')">Permissions</a>
       </span></li>
     </ul>
   </div>
